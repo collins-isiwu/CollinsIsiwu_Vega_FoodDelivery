@@ -7,7 +7,7 @@ from rest_framework.validators import UniqueValidator
 from django.core.mail import send_mail
 from django.utils import timezone
 from datetime import timedelta
-from .models import PasswordResetOTP
+from .models import PasswordReset
 
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
@@ -97,7 +97,10 @@ class PasswordResetRequestSerializer(serializers.Serializer):
         """
         Create or update an OTP for the user.
         """
-        otp_entry, created = PasswordResetOTP.objects.update_or_create(user=user, timestamp=timezone.now())
+        otp_entry, created = PasswordReset.objects.update_or_create(user=user)
+        if not created:
+            otp_entry.timestamp = timezone.now()
+            otp_entry.save() 
         otp_entry.generate_otp()
         return otp_entry
 
@@ -149,8 +152,8 @@ class PasswordResetSerializer(serializers.Serializer):
             raise serializers.ValidationError("Invalid email address.")
         
         try:
-            otp_entry = PasswordResetOTP.objects.get(user=user, otp=data['otp'])
-        except PasswordResetOTP.DoesNotExist:
+            otp_entry = PasswordReset.objects.get(user=user, otp=data['otp'])
+        except PasswordReset.DoesNotExist:
             raise serializers.ValidationError("Invalid OTP or token.")
 
         if timezone.now() > otp_entry.timestamp + timedelta(minutes=10):

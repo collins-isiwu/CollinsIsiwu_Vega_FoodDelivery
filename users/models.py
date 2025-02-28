@@ -74,7 +74,7 @@ class CustomUser(AbstractUser):
     )
 
 
-class PasswordResetOTP(models.Model):
+class PasswordReset(models.Model):
     """
     Model to store OTPs for password reset and track their expiration.
     """

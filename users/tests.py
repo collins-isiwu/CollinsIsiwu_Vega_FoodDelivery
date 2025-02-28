@@ -2,7 +2,7 @@ from django.urls import reverse
 from rest_framework.test import APITestCase
 from rest_framework import status
 from django.contrib.auth import get_user_model
-from .models import PasswordResetOTP
+from .models import PasswordReset
 
 CustomUser = get_user_model()
 
@@ -87,7 +87,7 @@ class PasswordResetViewTests(UserTestsSetUp):
         self.client.post(reverse('register'), self.user_data)
         response = self.client.post(reverse('password_reset_request'), {"email": self.user_data['email']})
 
-        otp_entry = PasswordResetOTP.objects.get(user__email=self.user_data['email'])
+        otp_entry = PasswordReset.objects.get(user__email=self.user_data['email'])
         otp = otp_entry.otp 
 
         reset_data = {
