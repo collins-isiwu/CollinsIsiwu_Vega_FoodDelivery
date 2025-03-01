@@ -23,7 +23,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ['email', 'first_name', 'last_name', 'password']
+        fields = ['email', 'first_name', 'last_name', 'password', 'address']
     
     def create(self, validated_data):
         password = validated_data.pop('password', None)
@@ -41,7 +41,7 @@ class AdminCreationSerializer(UserRegistrationSerializer):
     """
     class Meta(UserRegistrationSerializer.Meta):
         model = CustomUser
-        fields = ['email', 'first_name', 'last_name', 'password']
+        fields = ['email', 'first_name', 'last_name', 'password', 'address']
     
     def create(self, validated_data):
         password = validated_data.pop('password', None)

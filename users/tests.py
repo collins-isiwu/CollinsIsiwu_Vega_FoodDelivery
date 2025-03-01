@@ -15,6 +15,7 @@ class UserTestsSetUp(APITestCase):
             "email": "testuser@example.com",
             "first_name": "Test",
             "last_name": "User",
+            "address": " R Palmeira 81, São Martinho Do Porto",
             "password": "password123"
         }
         self.admin_data = {
@@ -22,6 +23,7 @@ class UserTestsSetUp(APITestCase):
             "first_name": "Admin",
             "last_name": "User",
             "password": "password123",
+            "address": " R Palmeira 81, São Martinho Do Porto",
             "is_admin": True
         }
         self.login_data = {
