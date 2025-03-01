@@ -1,6 +1,5 @@
 from django.contrib import admin
 from django.urls import path, include
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -8,4 +7,5 @@ urlpatterns = [
 
     path('api/v1/account/', include('users.urls')),
     path('api/v1/restaurants/', include('restaurants.urls')),
+    path('api/v1/menus/', include('menu.urls')),
 ]
