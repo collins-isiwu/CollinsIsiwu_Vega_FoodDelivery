@@ -4,10 +4,11 @@ Django settings for fooddelivery project.
 
 from pathlib import Path
 from datetime import timedelta
+from decouple import config
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-+)s4scl9061*4f_l$lq8$2x%c^n0ppb+py*6_qdsj+5-he^i=z'
+SECRET_KEY = config('SECRET_KEY')
 
 DEBUG = True
 
@@ -139,3 +140,6 @@ DEFAULT_FROM_EMAIL = 'noreply@fooddelivery.com'
 
 CORS_ALLOW_ALL_ORIGINS = True  # Remove in production
 CORS_ALLOW_CREDENTIALS = True
+
+
+OPENCAGE_API_KEY=config('OPENCAGE_API_KEY')
