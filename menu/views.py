@@ -1,8 +1,8 @@
 from rest_framework import generics, filters, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from .models import Food
-from .serializers import FoodSerializer, FoodDetailSerializer
+from .models import Food, FoodRating, FoodComment
+from .serializers import FoodRatingSerializer, FoodCommentSerializer, FoodDetailSerializer, FoodSerializer
 from users.permissions import IsAdmin 
 
 class FoodListView(generics.ListAPIView):
@@ -15,6 +15,7 @@ class FoodListView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
     filter_backends = [filters.SearchFilter]
     search_fields = ['name', 'price', 'is_available']
+    ordering_fields = ['price', 'average_rating'] # Allow sorting by price and average rating
 
     def list(self, request, *args, **kwargs):
         """
@@ -27,6 +28,7 @@ class FoodListView(generics.ListAPIView):
             return self.get_paginated_response({
                 'success': True,
                 'status': status.HTTP_200_OK,
+                'error': None,
                 'message': 'Food items fetched successfully.',
                 'data': serializer.data
             })
@@ -35,6 +37,7 @@ class FoodListView(generics.ListAPIView):
         return Response({
             'success': True,
             'status': status.HTTP_200_OK,
+            'error': None,
             'message': 'Food items fetched successfully.',
             'data': serializer.data
         })
@@ -58,6 +61,7 @@ class FoodDetailView(generics.RetrieveUpdateDestroyAPIView):
         return Response({
             'success': True,
             'status': status.HTTP_200_OK,
+            'error': None,
             'message': 'Food details fetched successfully.',
             'data': serializer.data
         })
@@ -74,14 +78,15 @@ class FoodDetailView(generics.RetrieveUpdateDestroyAPIView):
             return Response({
                 'success': True,
                 'status': status.HTTP_200_OK,
+                'error': None,
                 'message': 'Food item updated successfully.',
                 'data': serializer.data
             })
         return Response({
             'success': False,
             'status': status.HTTP_400_BAD_REQUEST,
-            'message': 'Failed to update food item.',
             'error': serializer.errors,
+            'message': 'Failed to update food item.',
             'data': None
         }, status=status.HTTP_400_BAD_REQUEST)
 
@@ -94,6 +99,7 @@ class FoodDetailView(generics.RetrieveUpdateDestroyAPIView):
         return Response({
             'success': True,
             'status': status.HTTP_204_NO_CONTENT,
+            'error': None,
             'message': 'Food item deleted successfully.',
             'data': None
         }, status=status.HTTP_204_NO_CONTENT)
@@ -117,6 +123,7 @@ class FoodCreateView(generics.CreateAPIView):
             return Response({
                 'success': True,
                 'status': status.HTTP_201_CREATED,
+                'error': error,
                 'message': 'Food item created successfully.',
                 'data': serializer.data
             }, status=status.HTTP_201_CREATED)
@@ -147,6 +154,66 @@ class FoodDetailForUsersView(generics.RetrieveAPIView):
         return Response({
             'success': True,
             'status': status.HTTP_200_OK,
+            'error': None,
             'message': 'Food details fetched successfully.',
             'data': serializer.data
         })
+
+
+class FoodRatingCreateView(generics.CreateAPIView):
+    """
+    API view for users to rate a food item.
+    """
+    queryset = FoodRating.objects.all()
+    serializer_class = FoodRatingSerializer
+    permission_classes = [IsAuthenticated]
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+
+        if serializer.is_valid():
+            rating = serializer.save(user=request.user)
+            return Response({
+                'success': True,
+                'status': status.HTTP_201_CREATED,
+                'error': None,
+                'message': 'Rating submitted successfully.',
+                'data': {'food': rating.food.name, 'rating': rating.rating}
+            }, status=status.HTTP_201_CREATED)
+        return Response({
+            'success': False,
+            'status': status.HTTP_400_BAD_REQUEST,
+            'message': 'Failed to rate food.',
+            'error': serializer.errors,
+            'data': None
+        }, status=status.HTTP_400_BAD_REQUEST)
+
+
+class FoodCommentCreateView(generics.CreateAPIView):
+    """
+    API view for users to comment on a food item.
+    """
+    queryset = FoodComment.objects.all()
+    serializer_class = FoodCommentSerializer
+    permission_classes = [IsAuthenticated]
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+
+        if serializer.is_valid():
+            comment = serializer.save(user=request.user)
+            return Response({
+                'success': True,
+                'status': status.HTTP_201_CREATED,
+                'error': None,
+                'message': 'Comment submitted successfully.',
+                'data': {'food': comment.food.name, 'comment': comment.comment}
+            }, status=status.HTTP_201_CREATED)
+        return Response({
+            'success': False,
+            'status': status.HTTP_400_BAD_REQUEST,
+            'error': serializer.errors,
+            'message': 'Failed to comment on food.',
+            'data': None
+        }, status=status.HTTP_400_BAD_REQUEST)
+    
