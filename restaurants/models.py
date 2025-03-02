@@ -8,6 +8,7 @@ class Restaurant(models.Model):
     """
     name = models.CharField(max_length=255)
     address = models.CharField(max_length=255) 
+    is_available = models.BooleanField(default=True)
     latitude = models.FloatField(blank=True, null=True) 
     longitude = models.FloatField(blank=True, null=True) 
     created_at = models.DateTimeField(auto_now_add=True)
