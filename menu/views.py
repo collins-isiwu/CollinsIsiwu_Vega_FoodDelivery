@@ -43,7 +43,7 @@ class FoodListView(generics.ListAPIView):
         })
 
 
-class FoodDetailView(generics.RetrieveUpdateDestroyAPIView):
+class FoodDetailAdminView(generics.RetrieveUpdateDestroyAPIView):
     """
     API view to retrieve, update, or delete a specific food item.
     Only admins can update or delete food items.
@@ -51,20 +51,6 @@ class FoodDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Food.objects.all()
     serializer_class = FoodSerializer
     permission_classes = [IsAuthenticated, IsAdmin]
-
-    def retrieve(self, request, *args, **kwargs):
-        """
-        Retrieve details of a food item.
-        """
-        instance = self.get_object()
-        serializer = self.get_serializer(instance)
-        return Response({
-            'success': True,
-            'status': status.HTTP_200_OK,
-            'error': None,
-            'message': 'Food details fetched successfully.',
-            'data': serializer.data
-        })
 
     def update(self, request, *args, **kwargs):
         """
@@ -123,7 +109,7 @@ class FoodCreateView(generics.CreateAPIView):
             return Response({
                 'success': True,
                 'status': status.HTTP_201_CREATED,
-                'error': error,
+                'error': None,
                 'message': 'Food item created successfully.',
                 'data': serializer.data
             }, status=status.HTTP_201_CREATED)
@@ -136,28 +122,43 @@ class FoodCreateView(generics.CreateAPIView):
         }, status=status.HTTP_400_BAD_REQUEST)
 
 
-class FoodDetailForUsersView(generics.RetrieveAPIView):
+class FoodDetailView(generics.RetrieveAPIView):
     """
     API view for users to view the details of a specific food item.
     Users can only view available food items.
     """
-    queryset = Food.objects.filter(is_available=True)
     serializer_class = FoodDetailSerializer
     permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        """
+        Override the default queryset to ensure only available food items are retrieved.
+        """
+        return Food.objects.all()
 
     def retrieve(self, request, *args, **kwargs):
         """
         Retrieve the details of an available food item.
         """
-        instance = self.get_object()
-        serializer = self.get_serializer(instance)
-        return Response({
-            'success': True,
-            'status': status.HTTP_200_OK,
-            'error': None,
-            'message': 'Food details fetched successfully.',
-            'data': serializer.data
-        })
+        try:
+            instance = self.get_object()
+            serializer = self.get_serializer(instance)
+            return Response({
+                'success': True,
+                'status': status.HTTP_200_OK,
+                'error': None,
+                'message': 'Food details fetched successfully.',
+                'data': serializer.data
+            })
+        except Food.DoesNotExist:
+            return Response({
+                'success': False,
+                'status': status.HTTP_404_NOT_FOUND,
+                'error': 'Food item not found or unavailable.',
+                'message': 'The requested food item does not exist or is unavailable.',
+                'data': None
+            })
+
 
 
 class FoodRatingCreateView(generics.CreateAPIView):

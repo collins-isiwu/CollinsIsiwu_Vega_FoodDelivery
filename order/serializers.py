@@ -74,7 +74,8 @@ class OrderDetailSerializer(serializers.ModelSerializer):
 
 class OrderListSerializer(serializers.ModelSerializer):
     restaurant_name = serializers.CharField(source='restaurant.name', read_only=True)
-
+    food_items = serializers.StringRelatedField(many=True)
+    
     class Meta:
         model = Order
         fields = ['id', 'food_items','restaurant_name', 'distance', 'total_price', 'status', 'created_at', 'updated_at', 'estimated_delivery_time']

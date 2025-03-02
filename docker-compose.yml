@@ -1,0 +1,47 @@
+services:
+  django:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - rabbitmq
+      - db
+    environment:
+      - CELERY_BROKER_URL=amqp://rabbitmq:5672
+      - DATABASE_URL=postgres://${DATABASE_USER}:${DATABASE_PASSWORD}@db:${DATABASE_PORT}/${DATABASE_NAME}
+
+  celery:
+    build: .
+    command: celery -A fooddelivery worker --loglevel=info
+    volumes:
+      - .:/app
+    depends_on:
+      - rabbitmq
+      - db
+    environment:
+      - CELERY_BROKER_URL=amqp://rabbitmq:5672
+      - DATABASE_URL=postgres://${DATABASE_USER}:${DATABASE_PASSWORD}@db:${DATABASE_PORT}/${DATABASE_NAME}
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    ports:
+      - "5672:5672"  
+      - "15672:15672"
+
+  db:
+    image: postgres:13-alpine
+    environment:
+      - POSTGRES_USER=${DATABASE_USER}
+      - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
+      - POSTGRES_DB=${DATABASE_NAME}
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+volumes:
+  pg_data:
+

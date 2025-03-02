@@ -58,7 +58,6 @@ class FoodRatingSerializer(serializers.ModelSerializer):
             existing_rating.save()
             return existing_rating
         else:
-            # Create a new rating if none exists
             return FoodRating.objects.create(user=user, food=food, rating=rating_value)
 
 
