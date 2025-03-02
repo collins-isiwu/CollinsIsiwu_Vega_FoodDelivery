@@ -11,6 +11,11 @@ This repository contains the backend for a food delivery system built with Djang
 - **Task Queue**: Celery with RabbitMQ
 
 ---
+## Link to Postman Collection
+```
+https://elements.getpostman.com/redirect?entityId=34423915-2baf39b7-3be5-4a7e-bac8-b20a56a89ece&entityType=collection
+```
+---
 
 ## 🚀 Getting Started
 
@@ -21,8 +26,8 @@ Ensure you have the following installed on your machine:
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/CollinsIsiwu_Vega_FoodDelivery/fooddelivery.git
-cd fooddelivery
+https://github.com/collins-isiwu/CollinsIsiwu_Vega_FoodDelivery.git
+cd CollinsIsiwu_Vega_FoodDelivery
 ```
 
 ### 2. Create a .env file in the root directory
@@ -43,7 +48,9 @@ OPENCAGE_API_KEY=8a206e8037f04a4f9482deba27aacbd3
 ```
 
 ### 3. Build and Run Docker Containers
-``` docker-compose up --build ```
+``` 
+docker-compose up --build 
+```
 
 This command will:
 - Build the Django image
@@ -53,15 +60,19 @@ This command will:
 ### 4. Apply Migrations
 Once the containers are up, you'll need to apply migrations for Django:
 
-``` docker-compose exec web python manage.py makemigrations ```
+``` 
+docker-compose exec web python manage.py makemigrations
 
-``` docker-compose exec web python manage.py migrate ```
-
+docker-compose exec web python manage.py migrate 
+ 
+```
 
 ### 5. Create Superuser (Admin)
 To create a superuser account, use the following command:
 
-``` docker-compose exec web python manage.py createsuperuser ```
+``` 
+docker-compose exec web python manage.py createsuperuser 
+```
 
 
 ### 6. Custom Management Commands
@@ -71,42 +82,59 @@ These include: restaurants, users, and food.
 
 You can run the following commands after starting your containers:
 
-``` docker-compose exec web python manage.py populate_restaurants ```
+``` 
+docker-compose exec web python manage.py populate_restaurants 
 
-```docker-compose exec web python manage.py populate_users ```
+docker-compose exec web python manage.py populate_users 
 
-```docker-compose exec web python manage.py populate_food ```
+docker-compose exec web python manage.py populate_food 
+```
 
 
 ### 7. Additional Information
 Running Celery Worker
 - To handle background tasks such as order processing, you'll need to run the Celery worker in a separate container. Use the following command:
 
-``` docker-compose exec web celery -A fooddelivery worker --loglevel=info ```
+``` 
+docker-compose exec web celery -A fooddelivery worker --loglevel=info
+```
 
 
 ### 8. Accessing the Admin Panel
 Once everything is running, you can access the Django admin panel at:
 
-``` http://localhost:8000/admin/ ```
+``` 
+http://localhost:8000/admin/ 
+
+```
 
 Create a Django default admin with:
-``` docker-compose exec web python manage.py createsuperuser ```
+``` 
+docker-compose exec web python manage.py createsuperuser
+```
 
 
 ### 9. Running Tests
 To run unit tests for the project, use the following command:
 
-``` docker-compose exec web python manage.py test ```
+``` 
+docker-compose exec web python manage.py test 
+```
 
 ### 10. Useful Docker Commands
 Stop all containers:
 
-``` docker-compose down ```
+``` 
+docker-compose down 
+```
 
 Rebuild and restart containers:
 
-``` docker-compose up --build ```
+``` 
+docker-compose up --build
+```
 
 View logs:
-``` docker-compose logs ```
+``` 
+docker-compose logs 
+```
